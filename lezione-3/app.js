@@ -53,15 +53,3 @@ const server = http.createServer(function (req, res) {
 	}).listen(8080,() =>
 	  console.log(`Server Running on ${HOST}:${PORT}`)
 );
-
-
-
-
-
-
-http.createServer(function (req, res) {
-    res.writeHead(200, {'Content-Type': 'application/json'} )
-    res.end(JSON.stringify(products, null, 2));
-}).listen(80, () => {
-    console.log('Server running on http://localhost:80');
-})
