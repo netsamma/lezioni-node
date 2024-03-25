@@ -1,12 +1,14 @@
+
+
+
 //**********************************************************************
-// Esercitazione - Moduli Built in - os, fs, path
+// Esercitazione 1 - Moduli Built in - os, fs, path
 //**********************************************************************
 
 const os = require('os')
 
 // console.log(os.userInfo())
 // console.log("Computer acceso da "+os.uptime()/3600+ " ore" )
-
 
 const info = {
 	so: os.type(),
@@ -23,7 +25,4 @@ console.log(info)
 // const nomeFile = 'app.js';
 // const percorsoCompleto = path.join(__dirname, nomeFile);
 // console.log("Percorso completo al file:", percorsoCompleto);
-
-
-
 

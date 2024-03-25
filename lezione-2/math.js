@@ -35,5 +35,10 @@ function calcolaDiagonaleQuadrato(lato) {
     return Math.sqrt(2*lato*lato)
 }
 
-// Esporta SOLO ALCUNE funzioni
+// Require JS - Esportiamo SOLO ALCUNE funzioni
 module.exports = { add, subtract, multiply, divide };
+
+// oppure 
+
+// ES6 module - "type":"module" in package.json
+// export {add, subtract}
