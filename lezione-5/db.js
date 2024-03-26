@@ -1,5 +1,5 @@
 // const mysql = require('mysql');
-const mysql = require('mysql/promise');
+const mysql = require('mysql2/promise');
 
 // mysql connector
 const mysqlConnector = mysql.createConnection({
@@ -22,4 +22,4 @@ mysqlConnector.query("SELECT 1")
     .then(()=> console.log('db connection succeeded'))
     .catch(()=> console.log('db connection failed'))
 
-module.exports = mysqlConnector 
+module.exports = mysqlConnector
