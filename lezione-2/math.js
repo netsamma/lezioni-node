@@ -35,6 +35,11 @@ function calcolaDiagonaleQuadrato(lato) {
     return Math.sqrt(2*lato*lato)
 }
 
+export function sum(...args) {
+	log('sum', args);
+	return args.reduce((num, tot) => tot + num);
+}
+
 // Require JS - Esportiamo SOLO ALCUNE funzioni
 module.exports = { add, subtract, multiply, divide };
 
