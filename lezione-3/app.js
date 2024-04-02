@@ -150,6 +150,10 @@
 // Server con Express JS e con accesso a DB Mysql 
 //**********************************************************************
 
+// Suggerimenti:
+// Bisogna installare i moduli express, body-parser, mysql2, dotenv con npm
+// Bisogna creare il file .env sull'esempio di .env_example e dare il valore
+
 const express = require('express');
 var bodyParser = require('body-parser');
 const mysql = require('mysql2');
@@ -160,6 +164,12 @@ dotenv.config();
 const app = express();
 app.use( bodyParser.json() );
 
+
+// Definizione delle rotte
+app.get('/', (req, res) => {
+    res.send('<h1>Homepage</h1>');
+});
+  
 // Configura la connessione al database MySQL
 const conn = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -172,10 +182,18 @@ const conn = mysql.createConnection({
   },
 });
 
-// Definizione delle rotte
-app.get('/', (req, res) => {
-  res.send('<h1>Homepage</h1>');
+app.get('/shops',  (req, res) => {
+  conn.query(
+    'SELECT * FROM shops',
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
 });
+
+
+// Recupera i prodtti dal DB
 
 app.get('/products',  (req, res) => {
   conn.query(
@@ -187,11 +205,18 @@ app.get('/products',  (req, res) => {
   )
 });
 
-// Aggiungere un prodotto
-app.post('/products', (req, res) => {
+
+// Aggiunge un negozio al DB
+app.post('/shops', (req, res) => {
   console.log(req.body);
   conn.query(
-    `INSERT INTO products (name) VALUES ('${req.body.name}')`,
+    `
+    INSERT INTO shops (denominazione, indirizzo) 
+    VALUES (
+      '${req.body.denominazione}', 
+      '${req.body.indirizzo}'
+    )
+    `,
     (err, result) => {
         if (err) { throw (err); }
         res.json(result);
@@ -199,12 +224,13 @@ app.post('/products', (req, res) => {
   )
 });
 
+
 // Gestione di tutte le altre richieste
 app.use((req, res) => {
   res.status(404).send('404 Not Found');
 });
 
 // Avvio del server
-app.listen(process.env.DB_PORT, () => {
-  console.log(`Server running at http://localhost:${process.env.DB_PORT}/`);
+app.listen(3000, () => {
+  console.log(`Server running at http://localhost:${3000}/`)
 });
