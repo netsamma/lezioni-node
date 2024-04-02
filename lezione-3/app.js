@@ -118,6 +118,33 @@
 
 
 
+//**********************************************************************
+// Operazioni dipendenti una dall'altra con Promise
+//**********************************************************************
+
+// const promiseQuery = (conn, query, params) => {
+//   return new Promise((resolve, reject) => {
+//     conn.query(query, params, function (err, res) {
+//       if (err) return reject(err);
+//       return resolve(res);
+//     });
+//   });
+// }
+
+// app.post('/addArmy/:game_id', (req, res) => {
+//   const body = req.body;
+//   promiseQuery(conn, `Update country SET army= army + ? WHERE game_id=? AND name=?`,
+//       [req.body.countryArmy, req.params.game_id, req.body.countryName]).then(
+//           r1 =>
+//               promiseQuery(conn,
+//                   'Select * FROM country WHERE game_id=? AND name=?',
+//                   [req.params.game_id, req.body.countryName]).then(r2 => res.json(r2[0]))
+
+
+
+
+
+
 
 //**********************************************************************
 // Server con Express JS e con accesso a DB Mysql 
@@ -181,92 +208,3 @@ app.use((req, res) => {
 app.listen(process.env.DB_PORT, () => {
   console.log(`Server running at http://localhost:${process.env.DB_PORT}/`);
 });
-
-
-
-
-
-
-
-//**********************************************************************
-// Operazioni dipendenti una dall'altra con Promise
-//**********************************************************************
-
-// const promiseQuery = (conn, query, params) => {
-//   return new Promise((resolve, reject) => {
-//     conn.query(query, params, function (err, res) {
-//       if (err) return reject(err);
-//       return resolve(res);
-//     });
-//   });
-// }
-
-// app.post('/addArmy/:game_id', (req, res) => {
-//   const body = req.body;
-//   promiseQuery(conn, `Update country SET army= army + ? WHERE game_id=? AND name=?`,
-//       [req.body.countryArmy, req.params.game_id, req.body.countryName]).then(
-//           r1 =>
-//               promiseQuery(conn,
-//                   'Select * FROM country WHERE game_id=? AND name=?',
-//                   [req.params.game_id, req.body.countryName]).then(r2 => res.json(r2[0]))
-
-
-
-
-
-//**********************************************************************
-// Esercitazione 4 - Server Node con accesso al DB Mysql
-//**********************************************************************
-
-// // File db.js
-
-// const mysql = require('mysql2');
-// // Installare mysql2
-
-// // Configurazione per la connessione al database MySQL
-// const connection = mysql.createConnection({
-//   host: 'localhost',
-//   user: 'root',
-//   password: 'root',
-//   database: 'ecommerce'
-// });
-
-// // Funzione per ottenere i prodotti dal database
-// function getAllProducts(callback) {
-//   connection.query('SELECT * FROM products', function(err, results) {
-//     if (err) {
-//       callback(err, null);
-//     } else {
-//       callback(null, results);
-//     }
-//   });
-// }
-
-// module.exports = {
-//   getAllProducts
-// };
-
-
-// // File app.js
-
-// const http = require('http');
-// const { getAllProducts } = require('./database'); 
-
-// const PORT = 8080;
-// const HOST = 'http://localhost';
-
-// const server = http.createServer(function (req, res) {
-//   res.setHeader('Content-Type', 'application/json');
-  
-//   // Ottieni i prodotti dal database
-//   getAllProducts(function(err, products) {
-//     if (err) {
-//       res.statusCode = 500;
-//       res.end(JSON.stringify({ error: 'Internal Server Error' }));
-//     } else {
-//       res.end(JSON.stringify(products, null, 2));
-//     }
-//   });
-// }).listen(PORT, () =>
-//   console.log(`Server Running on ${HOST}:${PORT}`)
-// );
