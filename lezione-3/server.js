@@ -162,12 +162,17 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
-app.use( bodyParser.json() );
+
+//Middleware
+
+// app.use( bodyParser.json() );
+app.use(bodyParser.urlencoded({ extended: true }));
 
 
 // Definizione delle rotte
 app.get('/', (req, res) => {
     res.send('<h1>Homepage</h1>');
+    console.log(req.body);
 });
   
 // Configura la connessione al database MySQL
@@ -182,7 +187,7 @@ const conn = mysql.createConnection({
   },
 });
 
-app.get('/shops',  (req, res) => {
+app.get('/get-shops',  (req, res) => {
   conn.query(
     'SELECT * FROM shops',
     (err, result) => {
@@ -195,7 +200,7 @@ app.get('/shops',  (req, res) => {
 
 // Recupera i prodtti dal DB
 
-app.get('/products',  (req, res) => {
+app.get('/get-products',  (req, res) => {
   conn.query(
     'SELECT * FROM products',
     (err, result) => {
@@ -207,21 +212,28 @@ app.get('/products',  (req, res) => {
 
 
 // Aggiunge un negozio al DB
-app.post('/shops', (req, res) => {
+app.post('/submit-shop', (req, res) => {
   console.log(req.body);
-  conn.query(
-    `
-    INSERT INTO shops (denominazione, indirizzo) 
-    VALUES (
-      '${req.body.denominazione}', 
-      '${req.body.indirizzo}'
-    )
-    `,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
+  // conn.query(
+  //   `
+  //   INSERT INTO shops (denominazione, indirizzo) 
+  //   VALUES (
+  //     '${req.body.denominazione}', 
+  //     '${req.body.indirizzo}'
+  //   )
+  //   `,
+  //   (err, result) => {
+  //       if (err) { throw (err); }
+  //       res.json(result);
+  //   }
+  // )
+});
+
+
+
+// Frontend Server Side Rendering (SSR)
+app.get('/form-shop',  (req, res) => {
+  res.sendFile(__dirname + '/frontend/public/form.html');
 });
 
 
