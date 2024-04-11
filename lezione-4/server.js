@@ -7,7 +7,7 @@
 // Bisogna creare il file .env sull'esempio di .env_example e dare il valore
 
 const express = require('express');
-var bodyParser = require('body-parser');
+// var bodyParser = require('body-parser');
 const mysql = require('mysql2');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -15,18 +15,13 @@ dotenv.config();
 
 const app = express();
 
-//Middleware
 
+//Middleware
 // app.use( bodyParser.json() );
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
-// Definizione delle rotte
-app.get('/', (req, res) => {
-    res.send('<h1>Homepage</h1>');
-    console.log(req.body);
-});
-  
 // Configura la connessione al database MySQL
 const conn = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -39,9 +34,111 @@ const conn = mysql.createConnection({
   },
 });
 
+
+// Home page
+app.get('/', (req, res) => {
+    res.send('<h1>Homepage</h1>');
+    console.log(req.body);
+});
+
+// **********************************************************************
+// Query per la ricerca, creazione, modifica, cancellazione dei record
+// **********************************************************************
+
+
+// Recupera gli shops dal DB
 app.get('/get-shops',  (req, res) => {
   conn.query(
     'SELECT * FROM shops',
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
+});
+
+
+// Recupera i prodotti dal DB
+app.get('/get-products',  (req, res) => {
+  conn.query(
+    'SELECT * FROM products',
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
+});
+
+
+// Aggiunge uno shop al DB
+app.post('/submit-shop', (req, res) => {
+  console.log(req.body);
+  conn.query(
+    `
+    INSERT INTO shops (denominazione, indirizzo) 
+    VALUES (
+      '${req.body.denominazione}', 
+      '${req.body.indirizzo}'
+    )
+    `,
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
+});
+
+
+// Route per la modifica dello shop nel DB
+app.post('/update-shop', (req, res) => {
+  const { id, name, indirizzo } = req.body;
+  const sql = 'UPDATE shops SET denominazione = ?, indirizzo = ? WHERE id = ?';
+  conn.query(sql, [name, indirizzo, id], (err, result) => {
+    if (err) {
+      throw (err)
+      // console.error('Error updating data:', err);
+      // res.status(500).send('Internal Server Error');
+    } else {
+      // console.log('Data updated successfully');
+      // res.status(200).send('Data updated successfully');
+      res.json(result);
+    }
+  });
+});
+
+
+
+// *************************************************************
+// Query per la creazione e l'interrogazione di tabelle del DB
+// *************************************************************
+
+// Crea la tabella shops nel DB
+app.get('/create-shops-table',  (req, res) => {
+  conn.query(
+    `CREATE TABLE shops (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      denominazione VARCHAR(255),
+      indirizzo VARCHAR(255)
+    );`,
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
+});
+
+// Inserisce 6 record di ESEMPIO nella tabella shops del DB
+app.get('/create-shops',  (req, res) => {
+  conn.query(
+    `
+    INSERT INTO shops (denominazione, indirizzo) VALUES
+      ('Ristorante La Brace', 'Via Roma, 123, Palermo'),
+      ('Pizzeria Da Michele', 'Via Vittorio Emanuele, 45, Palermo'),
+      ('Trattoria Nonna Maria', 'Via Libertà, 78, Palermo'),
+      ('Burger King', 'Via Maqueda, 56, Palermo'),
+      ('Ristorante Il Gabbiano', 'Lungomare Cristoforo Colombo, 12, Palermo'),
+      ('KFC Palermo', 'Via Notarbartolo, 34, Palermo');
+    `,
     (err, result) => {
         if (err) { throw (err); }
         res.json(result);
@@ -71,84 +168,11 @@ app.get('/dbtable', (req,res)=>{
   )
 });
 
-// Recupera i prodtti dal DB
-app.get('/get-products',  (req, res) => {
-  conn.query(
-    'SELECT * FROM products',
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-});
 
-// Recupera i prodtti dal DB
-app.get('/get-shops',  (req, res) => {
-  conn.query(
-    'SELECT * FROM shops',
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-});
+// ***************************************************************
+// Frontend API Server Side Rendering (SSR) e Static files
+// ***************************************************************
 
-app.get('/create-shops',  (req, res) => {
-  conn.query(
-    `
-    INSERT INTO shops (denominazione, indirizzo) VALUES
-      ('Ristorante La Brace', 'Via Roma, 123, Palermo'),
-      ('Pizzeria Da Michele', 'Via Vittorio Emanuele, 45, Palermo'),
-      ('Trattoria Nonna Maria', 'Via Libertà, 78, Palermo'),
-      ('Burger King', 'Via Maqueda, 56, Palermo'),
-      ('Ristorante Il Gabbiano', 'Lungomare Cristoforo Colombo, 12, Palermo'),
-      ('KFC Palermo', 'Via Notarbartolo, 34, Palermo');
-    `,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-});
-
-
-
-// Aggiunge un negozio al DB
-app.post('/submit-shop', (req, res) => {
-  console.log(req.body);
-  conn.query(
-    `
-    INSERT INTO shops (denominazione, indirizzo) 
-    VALUES (
-      '${req.body.denominazione}', 
-      '${req.body.indirizzo}'
-    )
-    `,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-});
-
-
-// Recupera i prodtti dal DB
-app.get('/create-shops-table',  (req, res) => {
-  conn.query(
-    `CREATE TABLE shops (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      denominazione VARCHAR(255),
-      indirizzo VARCHAR(255)
-    );`,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-});
-
-
-// Frontend Server Side Rendering (SSR)
 app.get('/form-shop',  (req, res) => {
   res.sendFile(__dirname + '/frontend/public/form.html');
 });

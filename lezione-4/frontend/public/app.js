@@ -18,8 +18,10 @@ document.addEventListener("DOMContentLoaded", function() {
       });
   }
 
+
   // Funzione per popolare la tabella con i dati ottenuti dall'API
   function populateTable(records) {
+    // console.log(records);
     var tableBody = document.querySelector('#table tbody');
     tableBody.innerHTML = ''; // Svuota la tabella prima di popolarla nuovamente
 
@@ -29,44 +31,38 @@ document.addEventListener("DOMContentLoaded", function() {
         <td>${record.id}</td>
         <td>${record.denominazione}</td>
         <td>${record.indirizzo}</td>
-        <td><button class="edit-btn">Modifica</button></td>
-      `;
+        <td><button class="edit-btn" data-id=${record.id}>Modifica</button></td>
+      `;      
       
+      // Aggiungi riga alla tabella
+      tableBody.appendChild(row);
+
+      // Aggiungi listener click su ogni pulsante "Modifica"
       var editButton = row.querySelector('.edit-btn');
       editButton.addEventListener('click', function() {
-        // Quando viene cliccato il pulsante di modifica, mostra un prompt per modificare i dati
-        var updatedDenom = prompt('Inserisci nuova denominazione:', record.denominazione);
-        if (updatedDenom !== null) {
-          record.denominazione = updatedDenom;
-          updateRecord(record);
-        }
+        fetchEditForm(record);
       });
       
-      tableBody.appendChild(row);
+      
     });
   }
 
-  // Funzione per aggiornare un record tramite l'API
-  function updateRecord(record) {
-    fetch('URL_DEL_TUO_ALTRO_ENDPOINT_API_PER_AGGIORNAMENTO', {
-      method: 'PUT', // Metodo HTTP per l'aggiornamento del record
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(record)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Errore durante l\'aggiornamento del record');
-      }
-      // Se l'aggiornamento è riuscito, ricarica i dati nella tabella
-      fetchRecords();
-    })
-    .catch(error => {
-      console.error(error);
-    });
+
+  
+  function fetchEditForm(selectedRecord) {
+    fetch('/form.html')
+      .then(response => response.text())
+      .then(data => {
+        // Aggiungi il contenuto della modal al div #form
+        document.getElementById("form").innerHTML = data;
+        document.getElementsByName('denominazione')[0].value = selectedRecord.denominazione;
+        document.getElementsByName('indirizzo')[0].value = selectedRecord.indirizzo;
+      })
+      .catch(error => console.error('Error:', error));
   }
+
 
   // Inizializza la tabella caricando i record dall'API
   fetchRecords();
+
 });
