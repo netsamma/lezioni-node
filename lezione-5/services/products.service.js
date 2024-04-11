@@ -6,7 +6,7 @@ const getAllProducts = async () => {
 }
 
 const getProductById = async (id) => {
-	const record = await db.query("SELECT * FROM products WHERE id = "+id) 
+	const record = await db.query("SELECT * FROM products WHERE ?",[id]) 
 	return record
 }
 
