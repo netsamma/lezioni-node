@@ -47,7 +47,9 @@ app.get('/', (req, res) => {
 
 
 // Recupera gli shops dal DB
-app.get('/get-shops',  (req, res) => {
+app.get('/get-shops', async (req, res) => {
+  
+  /*
   conn.query(
     'SELECT * FROM shops',
     (err, result) => {
@@ -55,6 +57,14 @@ app.get('/get-shops',  (req, res) => {
         res.json(result);
     }
   )
+  */
+
+  res.json(await conn.promise().query('SELECT * FROM shops'));
+
+  /*
+  Error: You have tried to call .then(), .catch(), or invoked await on the result of query that is not a promise, which is a programming error. Try calling con.promise().query(), or require('mysql2/promise') instead of 'mysql2' for a promise-compatible version of the query interface. To learn how to use async/await or Promises check out documentation at https://sidorares.github.io/node-mysql2/docs#using-promise-wrapper, or the mysql2 documentation at https://sidorares.github.io/node-mysql2/docs/documentation/promise-wrapper
+    at Query.then (C:\0\Dropbox\backend\lezioni-node-arces\lezione-4\node_modules\mysql2\lib\commands\query.js:43:11)
+  */
 });
 
 
