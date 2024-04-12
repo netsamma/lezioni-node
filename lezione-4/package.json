@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "SET NODE_ENV=production & node server.js",
-    "dev": "SET NODE_ENV=development & nodemon app.js"
+    "dev": "SET NODE_ENV=development & npx nodemon server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

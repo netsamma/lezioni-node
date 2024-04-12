@@ -7,14 +7,15 @@
 </head>
 <body>
 	<h1>Attività Commerciali</h1>
-    <form action="/submit-shop" method="POST">
+    <form action="/save-shop" method="POST">
+        <input type="hidden" name="id">
         <label for="denominazione">Denominazione:</label>
         <input type="text" name="denominazione" required><br><br>
         
         <label for="indirizzo">Indirizzo:</label>
         <input type="text" name="indirizzo" required><br><br>
         
-        <button type="submit">Invia</button>
+        <button type="submit">Salva</button>
     </form>
 </body>
 </html>

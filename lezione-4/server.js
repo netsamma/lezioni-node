@@ -70,17 +70,32 @@ app.get('/get-products',  (req, res) => {
 });
 
 
-// Aggiunge uno shop al DB
-app.post('/submit-shop', (req, res) => {
+// Aggiunge o modifica uno shop dal DB
+app.post('/save-shop', (req, res) => {
   console.log(req.body);
-  conn.query(
+  // Se ho passato l'id dalla tabella iniziale sono in modifica
+  if (req.body.id){
+    sql = `
+    UPDATE shops 
+    SET 
+      denominazione = '${req.body.denominazione}', 
+      indirizzo = '${req.body.indirizzo}'
+    WHERE 
+      id = ${req.body.id}
     `
+    console.log(sql);
+  }else{
+  // Altrimenti sono in inserimento
+    sql = `
     INSERT INTO shops (denominazione, indirizzo) 
     VALUES (
       '${req.body.denominazione}', 
       '${req.body.indirizzo}'
     )
-    `,
+    `
+  }
+  conn.query(
+    sql,
     (err, result) => {
         if (err) { throw (err); }
         res.json(result);
@@ -89,7 +104,27 @@ app.post('/submit-shop', (req, res) => {
 });
 
 
-// Route per la modifica dello shop nel DB
+// Modifica uno shop nel DB versione di DARIO
+app.post('/update-shop-dario', (req, res) => {
+  console.log(req.body);
+  conn.query(
+    `
+    UPDATE shops 
+    SET 
+      denominazione = '${req.body.denominazione}', 
+      indirizzo = '${req.body.indirizzo}'
+    WHERE 
+      id = ${req.body.id};
+    `,
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
+})
+
+
+// Modifica uno shop nel DB versione di DARIO con prepared statement
 app.post('/update-shop', (req, res) => {
   const { id, name, indirizzo } = req.body;
   const sql = 'UPDATE shops SET denominazione = ?, indirizzo = ? WHERE id = ?';
@@ -105,6 +140,7 @@ app.post('/update-shop', (req, res) => {
     }
   });
 });
+
 
 
 

@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // Funzione per popolare la tabella con i dati ottenuti dall'API
   function populateTable(records) {
+
     // console.log(records);
     var tableBody = document.querySelector('#table tbody');
     tableBody.innerHTML = ''; // Svuota la tabella prima di popolarla nuovamente
@@ -42,8 +43,7 @@ document.addEventListener("DOMContentLoaded", function() {
       editButton.addEventListener('click', function() {
         fetchEditForm(record);
       });
-      
-      
+
     });
   }
 
@@ -55,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function() {
       .then(data => {
         // Aggiungi il contenuto della modal al div #form
         document.getElementById("form").innerHTML = data;
+        document.getElementsByName('id')[0].value = selectedRecord.id;
         document.getElementsByName('denominazione')[0].value = selectedRecord.denominazione;
         document.getElementsByName('indirizzo')[0].value = selectedRecord.indirizzo;
       })
