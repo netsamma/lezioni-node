@@ -8,8 +8,7 @@
 
 const express = require('express');
 // var bodyParser = require('body-parser');
-const mysql = require('mysql2/promise');
-// const mysql = require('mysql2');
+const mysql = require('mysql2');
 const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -23,20 +22,8 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
-// Configura la connessione al database MySQL con mysql2
-// const conn = mysql.createConnection({
-//   host: process.env.DB_HOST,
-//   port: process.env.DB_PORT,
-//   user: process.env.DB_USERNAME,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_DATABASE,
-//   ssl: {
-//       rejectUnauthorized: false,
-//   },
-// });
-
-// Configura la connessione al database MySQL con mysql2/promise
-const conn = mysql.createPool({
+// Configura la connessione al database MySQL
+const conn = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USERNAME,
@@ -57,29 +44,20 @@ app.get('/', (req, res) => {
 // Query per la ricerca, creazione, modifica, cancellazione dei record
 // **********************************************************************
 
-// Recupera gli shops dal DB con mysql2
-// app.get('/get-shops',  (req, res) => {
-//   conn.query(
-//     'SELECT * FROM shops',
-//     (err, result) => {
-//         if (err) { throw (err); }
-//         res.json(result);
-//     }
-//   )
-// });
 
-// Recupera gli shops dal DB con mysql2/promise
-app.get('/get-shops', async (req, res) => {
-  // try {
-    const [rows] = await conn.query('SELECT * FROM shops');
-    res.send(rows);
-  // } catch (error) {
-    console.error('Error retrieving shops:', error);
-    res.status(500).send('Internal Server Error');
-  // }
+// Recupera gli shops dal DB
+app.get('/get-shops',  (req, res) => {
+  conn.query(
+    'SELECT * FROM shops',
+    (err, result) => {
+        if (err) { throw (err); }
+        res.json(result);
+    }
+  )
 });
 
-// Recupera i prodotti dal DB con mysql2
+
+// Recupera i prodotti dal DB
 app.get('/get-products',  (req, res) => {
   conn.query(
     'SELECT * FROM products',
