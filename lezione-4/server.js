@@ -22,7 +22,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
-// Configura la connessione al database MySQL
+// Configura la connessione al database MySQL con mysql/promise
 const pool = mysql.createPool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -33,6 +33,20 @@ const pool = mysql.createPool({
       rejectUnauthorized: false,
   },
 });
+
+// Configura la connessione al database MySQL con mysql
+const conn = mysql.createConnection({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  ssl: {
+      rejectUnauthorized: false,
+  },
+});
+
+
 
 // Home page
 app.get('/', (req, res) => {
@@ -59,9 +73,9 @@ app.get('/', (req, res) => {
 // Recupera gli shops dal DB con mysql/promise
 app.get('/get-shops', async (req, res) => {
   try {
-    const connection = await pool.getConnection();
-    const [rows] = await connection.query('SELECT * FROM shops');
-    connection.release();
+    const conn = await pool.getConnection();
+    const [rows] = await conn.query('SELECT * FROM shops');
+    conn.release();
     res.send(rows);
   } catch (error) {
     console.error('Error retrieving shops:', error);
@@ -84,8 +98,9 @@ app.get('/get-products',  (req, res) => {
 
 
 // Aggiunge o modifica uno shop dal DB
-app.post('/save-shop', (req, res) => {
+app.post('/save-shop', async (req, res) => {
   console.log(req.body);
+  const conn = await pool.getConnection();
   // Se ho passato l'id dalla tabella iniziale sono in modifica
   if (req.body.id){
     sql = `
@@ -107,19 +122,14 @@ app.post('/save-shop', (req, res) => {
     )
     `
   }
-  conn.query(
-    sql,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
+  const [result] = await conn.query(sql);
+  res.send(result);
 });
 
 
 // Modifica uno shop nel DB versione di DARIO
-app.post('/update-shop-dario', (req, res) => {
-  console.log(req.body);
+app.post('/update-shop-dario', async (req, res) => {
+  const conn = await pool.getConnection();
   conn.query(
     `
     UPDATE shops 
