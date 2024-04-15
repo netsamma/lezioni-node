@@ -8,7 +8,7 @@
 
 const express = require('express');
 // var bodyParser = require('body-parser');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -22,7 +22,19 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'frontend', 'public')));
 
-// Configura la connessione al database MySQL
+// Configura la connessione al database MySQL con mysql/promise
+const pool = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
+  ssl: {
+      rejectUnauthorized: false,
+  },
+});
+
+// Configura la connessione al database MySQL con mysql
 const conn = mysql.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
@@ -33,6 +45,7 @@ const conn = mysql.createConnection({
       rejectUnauthorized: false,
   },
 });
+
 
 
 // Home page
@@ -46,26 +59,30 @@ app.get('/', (req, res) => {
 // **********************************************************************
 
 
-// Recupera gli shops dal DB
+// // Recupera gli shops dal DB con mysql
+// app.get('/get-shops',  (req, res) => {
+//   conn.query(
+//     'SELECT * FROM shops',
+//     (err, result) => {
+//         if (err) { throw (err); }
+//         res.json(result);
+//     }
+//   )
+// });
+
+// Recupera gli shops dal DB con mysql/promise
 app.get('/get-shops', async (req, res) => {
-  
-  /*
-  conn.query(
-    'SELECT * FROM shops',
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-  */
-
-  res.json((await conn.promise().query('SELECT * FROM shops'))[0]);
-
-  /*
-  Error: You have tried to call .then(), .catch(), or invoked await on the result of query that is not a promise, which is a programming error. Try calling con.promise().query(), or require('mysql2/promise') instead of 'mysql2' for a promise-compatible version of the query interface. To learn how to use async/await or Promises check out documentation at https://sidorares.github.io/node-mysql2/docs#using-promise-wrapper, or the mysql2 documentation at https://sidorares.github.io/node-mysql2/docs/documentation/promise-wrapper
-    at Query.then (C:\0\Dropbox\backend\lezioni-node-arces\lezione-4\node_modules\mysql2\lib\commands\query.js:43:11)
-  */
+  try {
+    const conn = await pool.getConnection();
+    const [rows] = await conn.query('SELECT * FROM shops');
+    conn.release();
+    res.send(rows);
+  } catch (error) {
+    console.error('Error retrieving shops:', error);
+    res.status(500).send('Internal Server Error');
+  }
 });
+
 
 
 // Recupera i prodotti dal DB
@@ -81,8 +98,9 @@ app.get('/get-products',  (req, res) => {
 
 
 // Aggiunge o modifica uno shop dal DB
-app.post('/save-shop', (req, res) => {
+app.post('/save-shop', async (req, res) => {
   console.log(req.body);
+  const conn = await pool.getConnection();
   // Se ho passato l'id dalla tabella iniziale sono in modifica
   if (req.body.id){
     sql = `
@@ -104,19 +122,14 @@ app.post('/save-shop', (req, res) => {
     )
     `
   }
-  conn.query(
-    sql,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
+  const [result] = await conn.query(sql);
+  res.send(result);
 });
 
 
 // Modifica uno shop nel DB versione di DARIO
-app.post('/update-shop-dario', (req, res) => {
-  console.log(req.body);
+app.post('/update-shop-dario', async (req, res) => {
+  const conn = await pool.getConnection();
   conn.query(
     `
     UPDATE shops 
