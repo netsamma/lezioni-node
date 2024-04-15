@@ -181,8 +181,24 @@ app.post('/update-shop', (req, res) => {
   });
 });
 
+// form.html POSTs
+// ----------------------
 
+async function common_form_processing(request, response, sql){
+  const { id, denominazione, indirizzo } = request.body
+  query(sql, [denominazione, indirizzo, id])
+  response.redirect("/table-shops")
+}
 
+app.post("/table-shops", async function (request, response){
+  common_form_processing(request, response, 
+    'UPDATE shops SET denominazione = ?, indirizzo = ? WHERE id = ?')
+})
+
+app.post("/form-shop", async function (request, response){
+  common_form_processing(request, response, 
+    'INSERT INTO shops (denominazione, indirizzo) VALUES (?,?)')
+})
 
 // *************************************************************
 // Query per la creazione e l'interrogazione di tabelle del DB
