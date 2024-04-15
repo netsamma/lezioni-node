@@ -70,8 +70,21 @@ app.get('/', (req, res) => {
 //   )
 // });
 
+async function query(...arguments){
+  try{
+    const connection = await pool.getConnection()
+    const [rows] = await connection.query(...arguments)
+    connection.release()
+    return rows
+  } catch (error) {
+    return error
+  }
+}
+
 // Recupera gli shops dal DB con mysql/promise
 app.get('/get-shops', async (req, res) => {
+  res.json(await query('SELECT * FROM shops'))
+  /*
   try {
     const conn = await pool.getConnection();
     const [rows] = await conn.query('SELECT * FROM shops');
@@ -81,12 +94,15 @@ app.get('/get-shops', async (req, res) => {
     console.error('Error retrieving shops:', error);
     res.status(500).send('Internal Server Error');
   }
+  */
 });
 
 
 
 // Recupera i prodotti dal DB
-app.get('/get-products',  (req, res) => {
+app.get('/get-products', async (req, res) => {
+  res.json(await query('SELECT * FROM products'))
+  /*
   conn.query(
     'SELECT * FROM products',
     (err, result) => {
@@ -94,6 +110,7 @@ app.get('/get-products',  (req, res) => {
         res.json(result);
     }
   )
+  */
 });
 
 
