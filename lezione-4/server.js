@@ -9,6 +9,7 @@
 const express = require('express');
 // var bodyParser = require('body-parser');
 const mysql = require('mysql2/promise');
+const mysql2 = require('mysql2');
 const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
@@ -35,7 +36,7 @@ const pool = mysql.createPool({
 });
 
 // Configura la connessione al database MySQL con mysql
-const conn = mysql.createConnection({
+const conn = mysql2.createConnection({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   user: process.env.DB_USERNAME,
@@ -248,6 +249,15 @@ app.get('/db',  (req, res) => {
         res.json(result);
     }
   )
+});
+
+app.get('/db1',  async (req, res) => {
+  const [row] = await pool.query(
+    `SELECT TABLE_NAME 
+    FROM INFORMATION_SCHEMA.TABLES
+    WHERE TABLE_SCHEMA='ecommerce';`
+  );
+  res.send(row);
 });
 
 app.get('/dbtable', (req,res)=>{
