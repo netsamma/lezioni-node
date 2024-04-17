@@ -4,7 +4,7 @@
 
 // Suggerimenti:
 // Bisogna installare i moduli express, body-parser, path, mysql2, dotenv con npm
-// Bisogna creare il file .env sull'esempio di .env_example e dare il valore
+// Bisogna creare il file .env sull'esempio di .env.prod e dare il valore
 
 const express = require('express');
 // var bodyParser = require('body-parser');

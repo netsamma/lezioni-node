@@ -1,0 +1,15 @@
+{
+	"version": 2,
+	"builds": [
+		{
+			"src": "./lezione-4/server.js",
+			"use": "@vercel/node"
+		} 
+	],
+	"routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/"
+        }
+    ]
+}
