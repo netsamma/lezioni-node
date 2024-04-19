@@ -49,16 +49,17 @@ const conn = mysql2.createConnection({
 
 
 
+
 // Home page
 app.get('/', (req, res) => {
     res.send('<h1>Homepage</h1>');
     console.log(req.body);
 });
 
+
 // **********************************************************************
 // Query per la ricerca, creazione, modifica, cancellazione dei record
 // **********************************************************************
-
 
 // // Recupera gli shops dal DB con mysql
 // app.get('/get-shops',  (req, res) => {
@@ -85,33 +86,12 @@ async function query(...arguments){
 // Recupera gli shops dal DB con mysql/promise
 app.get('/get-shops', async (req, res) => {
   res.json(await query('SELECT * FROM shops'))
-  /*
-  try {
-    const conn = await pool.getConnection();
-    const [rows] = await conn.query('SELECT * FROM shops');
-    conn.release();
-    res.send(rows);
-  } catch (error) {
-    console.error('Error retrieving shops:', error);
-    res.status(500).send('Internal Server Error');
-  }
-  */
 });
-
 
 
 // Recupera i prodotti dal DB
 app.get('/get-products', async (req, res) => {
   res.json(await query('SELECT * FROM products'))
-  /*
-  conn.query(
-    'SELECT * FROM products',
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
-  */
 });
 
 
@@ -146,27 +126,31 @@ app.post('/save-shop', async (req, res) => {
 
 
 // Modifica uno shop nel DB versione di DARIO
-app.post('/update-shop-dario', async (req, res) => {
-  const conn = await pool.getConnection();
-  conn.query(
-    `
-    UPDATE shops 
+app.post('/update-shop', async (req, res) => {
+  const { id, indirizzo, denominazione } = req.body;
+  const sql = `
+    UPDATE 
+      shops 
     SET 
-      denominazione = '${req.body.denominazione}', 
-      indirizzo = '${req.body.indirizzo}'
+      denominazione = '${denominazione}', 
+      indirizzo = '${indirizzo}'
     WHERE 
-      id = ${req.body.id};
-    `,
-    (err, result) => {
-        if (err) { throw (err); }
-        res.json(result);
-    }
-  )
+      id = ${id};
+  `
+  res.json(await query(sql))
+})
+
+
+// Cancella uno shop
+app.get('/delete/:id', async (req, res) => {
+  const sql = `DELETE FROM shops WHERE id = ${req.params.id}`
+  console.log(sql);
+  res.json(await query(sql))
 })
 
 
 // Modifica uno shop nel DB versione di DARIO con prepared statement
-app.post('/update-shop', (req, res) => {
+app.post('/update-shop-2', (req, res) => {
   const { id, name, indirizzo } = req.body;
   const sql = 'UPDATE shops SET denominazione = ?, indirizzo = ? WHERE id = ?';
   conn.query(sql, [name, indirizzo, id], (err, result) => {
@@ -181,6 +165,7 @@ app.post('/update-shop', (req, res) => {
     }
   });
 });
+
 
 // form.html POSTs
 // ----------------------
@@ -200,6 +185,7 @@ app.post("/form-shop", async function (request, response){
   common_form_processing(request, response, 
     'INSERT INTO shops (denominazione, indirizzo) VALUES (?,?)')
 })
+
 
 // *************************************************************
 // Query per la creazione e l'interrogazione di tabelle del DB

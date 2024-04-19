@@ -7,19 +7,22 @@
 </head>
 <body>
 	<a href="/form-shop"><h3>Aggiungi Negozio</h3></a>
-	<table id="table">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Denominazione</th>
-			<th>Indirizzo</th>
-			<th>Azioni</th>
-		</tr>
-	</thead>
-	<tbody>
-		<!-- Le righe della tabella sono caricate dinamicamente dal DB -->
-	</tbody>
-	</table>
+
+	<div style="height:50vh; overflow-y: auto;">
+		<table id="table">
+			<thead>
+				<tr>
+					<th>Id</th>
+					<th>Denominazione</th>
+					<th>Indirizzo</th>
+					<th>Azioni</th>
+				</tr>
+			</thead>
+			<tbody>
+				<!-- Le righe della tabella sono caricate dinamicamente dal DB -->
+			</tbody>
+		</table>
+	</div>
 	
 	<div id="form"></div>
 
