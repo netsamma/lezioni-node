@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Server with mysql connection",
   "main": "server.js",
+  "type":"module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
   },
   "author": "Ignazio Sammarco",
   "license": "ISC",
   "dependencies": {
+    "express": "^4.19.2",
     "mysql2": "^3.9.2"
   }
 }
