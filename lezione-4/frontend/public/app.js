@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", function() {
         <td>${record.denominazione}</td>
         <td>${record.indirizzo}</td>
         <td><button class="edit-btn" data-id=${record.id}>Modifica</button></td>
+        <td><button class="del-btn" data-id=${record.id}>Cancella</button></td>
       `;      
       
       // Aggiungi riga alla tabella
@@ -43,6 +44,13 @@ document.addEventListener("DOMContentLoaded", function() {
       editButton.addEventListener('click', function() {
         fetchEditForm(record);
       });
+
+       // Aggiungi listener click su ogni pulsante "Modifica"
+       var delButton = row.querySelector('.del-btn');
+       delButton.addEventListener('click', function() {
+         delRow(record);
+       });
+ 
 
     });
   }
@@ -60,6 +68,11 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementsByName('indirizzo')[0].value = selectedRecord.indirizzo;
       })
       .catch(error => console.error('Error:', error));
+  }
+
+  function delRow(selectedRecord){
+    console.log("Cliccato");
+    fetch(`/delete/${selectedRecord.id}`)
   }
 
 
