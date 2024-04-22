@@ -1,4 +1,5 @@
-const db = require('../db')
+//const db = require('../db')
+import db from "../db.js";
 
 const getAllProducts = async () => {
 	const [records] = await db.query("SELECT * FROM products") 
@@ -6,8 +7,9 @@ const getAllProducts = async () => {
 }
 
 const getProductById = async (id) => {
-	const record = await db.query("SELECT * FROM products WHERE ?",[id]) 
-	return record
+	const [records] = await db.query("SELECT * FROM products WHERE id=?",[id]) 
+	return records[0]
 }
 
-module.exports = {getAllProducts, getProductById}
+//module.exports = {getAllProducts, getProductById}
+export default {getAllProducts, getProductById}
