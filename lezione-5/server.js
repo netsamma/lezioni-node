@@ -2,8 +2,11 @@
 // Esercitazione 5 - Server Node con connessione mysql db, controller e services
 //******************************************************************************
 
-const express = require('express');
-const productsController = require('./controllers/products.controller');
+//const express = require('express');
+import express from "express";
+
+//const productsController = require('./controller/products.controller');
+import productsController from "./controller/products.controller.js";
 
 const app = express();
 

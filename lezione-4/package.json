@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node server.js",
-    "dev": "npx nodemon server.js"
+    "dev": "npx nodemon server.js",
+    "dev-bash": "env NODE_ENV=development nodemon server.js"
   },
   "dependencies": {
     "dotenv": "^16.4.5",

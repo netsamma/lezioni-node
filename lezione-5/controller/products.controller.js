@@ -1,7 +1,10 @@
-const express = require('express')
+//const express = require('express')
+import express from "express";
+
 const router = express.Router()
 
-const service = require('../services/products.service')
+//const service = require('../services/products.service')
+import service from "../services/products.service.js";
 
 router.get('/', async (req, res) => {
 	const products = await service.getAllProducts()
@@ -9,10 +12,11 @@ router.get('/', async (req, res) => {
 	res.send(products)
 })
 
-router.get('/:id', async (req, res) => {
-	const product = await service.getProductById(2)
+router.get('/by_id/:id', async (req, res) => {
+	const product = await service.getProductById(req.params.id)
 	// res.send('Prodotto con id: '+id)
 	res.send(product)
 })
 
-module.exports = router
+//module.exports = router
+export default router

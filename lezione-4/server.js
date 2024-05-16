@@ -192,7 +192,16 @@ app.post("/form-shop", async function (request, response){
 // *************************************************************
 
 // Crea la tabella shops nel DB
-app.get('/create-shops-table',  (req, res) => {
+app.get('/create-shops-table', async (req, res) => {
+ 
+  const sql=`CREATE TABLE shops (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    denominazione VARCHAR(255),
+    indirizzo VARCHAR(255)
+  );`
+  res.json(await query(sql))
+
+  if(false)
   conn.query(
     `CREATE TABLE shops (
       id INT AUTO_INCREMENT PRIMARY KEY,
@@ -207,17 +216,22 @@ app.get('/create-shops-table',  (req, res) => {
 });
 
 // Inserisce 6 record di ESEMPIO nella tabella shops del DB
-app.get('/create-shops',  (req, res) => {
+app.get('/create-shops', async (req, res) => {
+
+  const sql =     `
+  INSERT INTO shops (denominazione, indirizzo) VALUES
+    ('Ristorante La Brace', 'Via Roma, 123, Palermo'),
+    ('Pizzeria Da Michele', 'Via Vittorio Emanuele, 45, Palermo'),
+    ('Trattoria Nonna Maria', 'Via Libertà, 78, Palermo'),
+    ('Burger King', 'Via Maqueda, 56, Palermo'),
+    ('Ristorante Il Gabbiano', 'Lungomare Cristoforo Colombo, 12, Palermo'),
+    ('KFC Palermo', 'Via Notarbartolo, 34, Palermo');
+  `
+  res.json(await query(sql))
+  
+  if(false)
   conn.query(
-    `
-    INSERT INTO shops (denominazione, indirizzo) VALUES
-      ('Ristorante La Brace', 'Via Roma, 123, Palermo'),
-      ('Pizzeria Da Michele', 'Via Vittorio Emanuele, 45, Palermo'),
-      ('Trattoria Nonna Maria', 'Via Libertà, 78, Palermo'),
-      ('Burger King', 'Via Maqueda, 56, Palermo'),
-      ('Ristorante Il Gabbiano', 'Lungomare Cristoforo Colombo, 12, Palermo'),
-      ('KFC Palermo', 'Via Notarbartolo, 34, Palermo');
-    `,
+  sql,
     (err, result) => {
         if (err) { throw (err); }
         res.json(result);
