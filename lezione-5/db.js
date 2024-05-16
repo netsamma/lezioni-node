@@ -1,25 +1,26 @@
 // const mysql = require('mysql');
-const mysql = require('mysql2/promise');
+
+//const mysql = require('mysql2/promise');
+import mysql from "mysql2/promise";
 
 // mysql connector
-const mysqlConnector = mysql.createConnection({
+const mysqlConnector = await mysql.createConnection({
     // host: process.env.DB_HOST,
-    host: 'localhost',
+    host: '127.0.0.1',
     // port: process.env.DB_PORT,
     port: 3306,
     // user: process.env.DB_USERNAME,
     user: 'root',
     // password: process.env.DB_PASSWORD,
-    password: 'root',
+    password: 'password',
     // database: process.env.DB_DATABASE,
-    database: 'ecommerce',
-    ssl: {
-        rejectUnauthorized: false,
-    },
+    database: 'express_ecommerce',
+
 });
 
 mysqlConnector.query("SELECT 1")
     .then(()=> console.log('db connection succeeded'))
     .catch(()=> console.log('db connection failed'))
 
-module.exports = mysqlConnector
+//module.exports = mysqlConnector
+export default mysqlConnector;
