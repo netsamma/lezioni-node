@@ -50,6 +50,15 @@ const conn = mysql2.createConnection({
 
 
 
+/************************************************
+*
+* Routes, applicazione BE e FE
+*
+*************************************************/
+
+
+
+
 // Home page
 app.get('/', (req, res) => {
     res.send('<h1>Homepage</h1>');
