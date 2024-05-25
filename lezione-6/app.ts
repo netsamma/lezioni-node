@@ -136,3 +136,26 @@ class Persona {
 
 console.log(Persona.concatena("Mario", "Rossi"));  //Mario Rossi
 
+
+// Overloading di funzioni, unione tipi parametri, operatore ? opzionale
+
+function sommaArray(array: number[]){
+  return array.reduce((sum:number, x:number) => sum + x)
+}
+
+function somma(x:number | number[], y?:number){
+  if (typeof x === "number" ) {
+    return x + y!;
+  }else if (typeof x === "object" ){
+    return x.reduce((sum:number, x:number) => sum + x);
+  }else{
+    return null;
+  }
+}
+
+console.log(sommaArray([2,3,6,8,9]))
+
+console.log(somma([2,3,6,8,9]))
+
+import { Geometria } from "./geometria";
+console.log(Geometria.circonferenza(3));
